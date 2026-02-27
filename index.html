@@ -1,0 +1,639 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.5, user-scalable=yes">
+    <title>初四法则 · 自由消费计算器</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+        }
+        body {
+            background: #f5f3f0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px 16px;
+        }
+        .card {
+            max-width: 680px;
+            width: 100%;
+            background: white;
+            border-radius: 32px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.06);
+            padding: 32px 28px;
+            margin: 12px 0;
+        }
+        h1 {
+            font-size: 2.2rem;
+            font-weight: 600;
+            letter-spacing: -0.5px;
+            color: #1e1e2f;
+            margin: 0 0 8px 0;
+            line-height: 1.2;
+        }
+        .subhead {
+            font-size: 1rem;
+            color: #5a5a6e;
+            border-left: 4px solid #d4b68a;
+            padding-left: 16px;
+            margin: 10px 0 28px 0;
+            background: #faf9f7;
+            border-radius: 0 12px 12px 0;
+            line-height: 1.5;
+        }
+        .badge {
+            background: #eae3d7;
+            color: #3e3e4f;
+            padding: 6px 14px;
+            border-radius: 40px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-bottom: 16px;
+            letter-spacing: 0.3px;
+        }
+        .formula-section {
+            background: #ffffff;
+            border-radius: 24px;
+            padding: 24px 22px;
+            margin-bottom: 30px;
+            border: 1px solid #eeeae5;
+            transition: box-shadow 0.2s;
+        }
+        .formula-section:hover {
+            box-shadow: 0 6px 16px rgba(0,0,0,0.02);
+        }
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+            color: #1e1e2f;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .section-title span {
+            background: #d4b68a;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 40px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1rem;
+            font-weight: 500;
+        }
+        .input-group {
+            margin-bottom: 20px;
+        }
+        .input-row {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 12px;
+            margin-bottom: 8px;
+        }
+        .input-row label {
+            width: 140px;
+            font-weight: 500;
+            color: #3d3d4e;
+            font-size: 0.95rem;
+        }
+        .input-row input {
+            flex: 1;
+            min-width: 180px;
+            padding: 12px 16px;
+            border: 1.5px solid #e2dbd2;
+            border-radius: 24px;
+            font-size: 1rem;
+            background: white;
+            transition: 0.2s;
+            outline: none;
+        }
+        .input-row input:focus {
+            border-color: #b08968;
+            box-shadow: 0 0 0 3px rgba(176, 137, 104, 0.1);
+        }
+        .input-hint {
+            font-size: 0.85rem;
+            color: #898989;
+            margin-left: 150px;
+            margin-top: -4px;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .result-box {
+            background: #f2eee9;
+            padding: 18px 22px;
+            border-radius: 30px;
+            margin-top: 18px;
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 12px 20px;
+        }
+        .result-label {
+            font-weight: 500;
+            color: #4a4a5c;
+            font-size: 1rem;
+        }
+        .result-value {
+            font-size: 2.2rem;
+            font-weight: 650;
+            color: #2c2c3a;
+            line-height: 1;
+            letter-spacing: -0.5px;
+        }
+        .result-unit {
+            font-size: 1rem;
+            color: #6b6b7b;
+            margin-left: -8px;
+        }
+        .result-note {
+            font-size: 0.9rem;
+            color: #5b5b70;
+            background: #e7dfd6;
+            padding: 4px 14px;
+            border-radius: 40px;
+            margin-left: auto;
+        }
+        .ref-panel {
+            background: #f9f6f2;
+            border-radius: 22px;
+            padding: 22px;
+            margin-top: 25px;
+        }
+        .ref-title {
+            font-weight: 600;
+            color: #2f2f3b;
+            font-size: 1.1rem;
+            margin-bottom: 18px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .ref-title i {
+            font-style: normal;
+            background: #b08968;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+        }
+        .ref-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+        .ref-item {
+            background: white;
+            padding: 16px;
+            border-radius: 18px;
+            border-left: 4px solid #d4b68a;
+        }
+        .ref-item strong {
+            display: block;
+            font-size: 0.95rem;
+            color: #1e1e2f;
+            margin-bottom: 8px;
+        }
+        .ref-item p {
+            font-size: 0.9rem;
+            color: #626277;
+            margin: 4px 0;
+            line-height: 1.4;
+        }
+        .highlight {
+            background: #e9ddcf;
+            color: #2f2f3b;
+            padding: 2px 8px;
+            border-radius: 30px;
+            font-weight: 500;
+            font-size: 0.85rem;
+            display: inline-block;
+            margin-right: 4px;
+        }
+        .footnote {
+            border-top: 2px dashed #ddd6ce;
+            margin-top: 25px;
+            padding-top: 22px;
+            color: #5e5e72;
+            font-size: 0.9rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+            align-items: center;
+        }
+        .btn-soft {
+            background: #ffffff;
+            border: 1.5px solid #cfc6bc;
+            color: #4a4a5c;
+            border-radius: 60px;
+            padding: 12px 22px;
+            font-size: 0.9rem;
+            font-weight: 500;
+            cursor: default;
+            transition: 0.2s;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.02);
+        }
+        .btn-soft:hover {
+            background: #f0eae2;
+        }
+        hr {
+            border: none;
+            border-top: 2px solid #ece3da;
+            margin: 24px 0;
+        }
+        .small-note {
+            font-size: 0.85rem;
+            color: #8e8e9c;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 6px;
+        }
+        .emoji-bullet {
+            font-size: 1.2rem;
+        }
+
+        /* ========== 可折叠背景故事样式 ========== */
+        .story-container {
+            background: #f9f6f2;
+            border-radius: 22px;
+            padding: 16px 24px;
+            margin: 20px 0 10px;
+        }
+        .story-container details {
+            width: 100%;
+        }
+        .story-container summary {
+            font-weight: 600;
+            color: #2f2f3b;
+            font-size: 1.1rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            list-style: none; /* 移除默认三角形 */
+            padding: 4px 0;
+            user-select: none;
+        }
+        .story-container summary::-webkit-details-marker {
+            display: none; /* 隐藏 WebKit 默认三角形 */
+        }
+        .story-container summary::before {
+            content: "📖";
+            font-style: normal;
+            background: #b08968;
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            margin-right: 4px;
+        }
+        .story-container summary::after {
+            content: "▼";
+            font-size: 0.8rem;
+            margin-left: auto;
+            transition: transform 0.2s;
+            color: #b08968;
+        }
+        .story-container details[open] summary::after {
+            transform: rotate(180deg);
+        }
+        .story-content {
+            margin-top: 16px;
+            padding-top: 8px;
+            border-top: 1px dashed #d4b68a;
+        }
+        .story-content h3 {
+            font-size: 1.2rem;
+            margin: 16px 0 8px;
+            color: #2c2c3a;
+        }
+        .story-content p {
+            color: #4a4a5c;
+            line-height: 1.6;
+            margin-bottom: 16px;
+        }
+        .story-content .note-box {
+            background: #eae1d7;
+            padding: 12px;
+            border-radius: 16px;
+            margin-top: 16px;
+        }
+
+        /* ========== 增强移动端适配 ========== */
+        @media (max-width: 550px) {
+            .card {
+                padding: 22px 16px;
+                border-radius: 24px;
+            }
+            h1 {
+                font-size: 1.8rem;
+            }
+            .section-title {
+                font-size: 1.2rem;
+            }
+            /* 输入区域：标签在上，输入框在下 */
+            .input-row {
+                flex-direction: column;
+                gap: 6px;
+                margin-bottom: 16px;
+            }
+            .input-row label {
+                width: 100%;
+                font-size: 0.9rem;
+            }
+            .input-row input {
+                width: 100%;
+                min-width: 0;
+                font-size: 1rem;
+                padding: 14px 16px;
+            }
+            .input-hint {
+                margin-left: 0;
+                margin-top: 2px;
+                margin-bottom: 12px;
+            }
+            /* 结果区域垂直排列 */
+            .result-box {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+                padding: 16px;
+            }
+            .result-label {
+                font-size: 0.95rem;
+            }
+            .result-value {
+                font-size: 2rem;
+            }
+            .result-note {
+                margin-left: 0;
+                align-self: flex-start;
+            }
+            /* 参考卡片单列 */
+            .ref-grid {
+                grid-template-columns: 1fr;
+            }
+            /* 底部提示堆叠 */
+            .footnote {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 8px;
+            }
+            .footnote span:last-child {
+                margin-left: 0;
+            }
+            /* 按钮全宽 */
+            .btn-soft {
+                width: 100%;
+                text-align: center;
+            }
+            /* 没苦硬吃区域调整 */
+            div[style*="display: flex; gap: 12px; flex-wrap: wrap;"] {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 375px) {
+            .card {
+                padding: 18px 12px;
+            }
+            h1 {
+                font-size: 1.6rem;
+            }
+            .result-value {
+                font-size: 1.8rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="badge">🎂 初四消费法则</div>
+        <h1>初四法则</h1>
+        <div class="subhead">一个帮你摆脱消费纠结的工具 · 不再为小钱纠结，也不沉迷物欲疯狂消费，饮鸩止渴！</div>
+
+        <!-- 公式一：时间价值 -->
+        <div class="formula-section">
+            <div class="section-title">
+                <span>①</span> 你的半小时值多少钱？
+            </div>
+            <div class="input-group">
+                <div class="input-row">
+                    <label>年收入 (元/年)</label>
+                    <input type="number" id="income" value="200000" step="1000" min="0" placeholder="例：200000">
+                </div>
+                <div class="input-hint">✱ 全年总收入（建议使用税前）</div>
+
+                <div class="input-row">
+                    <label>闲暇系数 (k)</label>
+                    <input type="number" id="leisureFactor" value="2.5" step="0.1" min="1" max="5">
+                </div>
+                <div class="input-hint">✱ 休息时间的珍贵程度，建议 2～3 (0-1为不珍视，2=较珍视, 3=很珍视)</div>
+
+                <div class="input-row">
+                    <label>耗时 (小时)</label>
+                    <input type="number" id="timeHours" value="0.5" step="0.1" min="0.1">
+                </div>
+                <div class="input-hint">✱ 通常按0.5小时（半小时）计算，可调整</div>
+            </div>
+
+            <div class="result-box" id="timeResultBox">
+                <span class="result-label">⚡ 单次参考价</span>
+                <span class="result-value" id="timeValue">34.25</span>
+                <span class="result-unit">元</span>
+                <span class="result-note">≤ 此数 → 值得花</span>
+            </div>
+            <div class="small-note">
+                <span class="emoji-bullet">⏳</span> 如果一笔消费 ≤ 这个数，且能为你省下半小时或带来快乐，直接花，因为你的时间更值钱。
+            </div>
+        </div>
+
+        <!-- 公式二：每日无脑预算 -->
+        <div class="formula-section">
+            <div class="section-title">
+                <span>②</span> 每天可以无脑花多少？
+            </div>
+            <div class="input-group">
+                <div class="input-row">
+                    <label>流动资产 A (元)</label>
+                    <input type="number" id="assets" value="500000" step="10000" min="0" placeholder="例：500000">
+                </div>
+                <div class="input-hint">✱ 现金/存款/股票基金等（不包括自住房、车）</div>
+
+                <div class="input-row">
+                    <label>理财收益率 r (%)</label>
+                    <input type="number" id="rateReturn" value="1.8" step="0.1" min="0">
+                </div>
+                <div class="input-hint">✱ 可参考10年期国债 (目前1.8%左右) 或你自己的理财年化收益率</div>
+
+                <div class="input-row">
+                    <label>预期增长率 g (%)</label>
+                    <input type="number" id="rateGrowth" value="0.0" step="0.1" min="0">
+                </div>
+                <div class="input-hint">✱ 0% = 保值；0.7% ≈ 2025年核心通胀；也可设为你希望的财富增速</div>
+            </div>
+
+            <div class="result-box" id="dailyResultBox">
+                <span class="result-label">💰 每日可花额度</span>
+                <span class="result-value" id="dailyValue">24.66</span>
+                <span class="result-unit">元/天</span>
+                <span class="result-note">花完不影响资产增值</span>
+            </div>
+            <div class="small-note">
+                <span class="emoji-bullet">📆</span> 这是你每天可以“无脑花”的总预算（来自资产收益）。全天累计不超过它，你的资产就会按预期增长。
+            </div>
+        </div>
+
+        <!-- 取值参考与说明卡片 -->
+        <div class="ref-panel">
+            <div class="ref-title"><i>📋</i> 取值参考 & 客观锚点 (基于2025年数据)</div>
+            <div class="ref-grid">
+                <div class="ref-item">
+                    <strong>📈 理财收益率 r</strong>
+                    <p>• 10年期国债收益率：<span class="highlight">1.8% ~ 1.85%</span> (2025年末)</p>
+                    <p>• 如果你的理财能力更强，可用自己的年化 (如4%)，但需明白那是主观预期。</p>
+                </div>
+                <div class="ref-item">
+                    <strong>🎯 预期增长率 g</strong>
+                    <p>• 2025全年CPI：<span class="highlight">0%</span> (保值)</p>
+                    <p>• 核心CPI：<span class="highlight">0.7%</span> (跑赢核心通胀)</p>
+                    <p>• 也可设为你想让资产每年增长的百分比 (如2%)。</p>
+                </div>
+                <div class="ref-item">
+                    <strong>⏱️ 闲暇系数 k</strong>
+                    <p>• 建议 <span class="highlight">2～3</span> 之间。</p>
+                    <p>• 0-1 = 不珍视，愿意为钱牺牲时间；2 = 比较珍视闲暇；3 = 极度珍视，不愿为小钱牺牲休息。</p>
+                </div>
+                <div class="ref-item">
+                    <strong>💡 流动资产 A</strong>
+                    <p>只算可变现的金融资产：银行存款、股票、基金、理财等。</p>
+                    <p>自住房、车等不产生现金流，不计入。</p>
+                </div>
+            </div>
+            <div style="margin-top: 20px; background: #eae1d7; padding: 14px; border-radius: 18px;">
+                <p style="font-weight: 500; margin-bottom: 8px;">🧾 结果解读</p>
+                <p style="margin: 5px 0;">✔ 公式① <strong>单次参考价</strong>：半小时闲暇的心理价值。消费≤此数且能省时/悦己 → 直接花，不纠结。</p>
+                <p style="margin: 5px 0;">✔ 公式② <strong>每日预算</strong>：从资产收益中取出的“零花钱”。每天花不超过它，你的资产将按<span style="background: #d4b68a30; padding:2px 6px;">预期增长率 g</span> 继续增值。</p>
+                <p style="margin: 12px 0 0 0; font-style: italic; color: #4d4d5c;">⭐ 如果钱还躺在活期/手上，建议先转入零钱通、国债或稳健理财 —— 让钱活起来，才有每日预算。</p>
+            </div>
+        </div>
+
+        <!-- 额外提示：没苦硬吃 vs 理性消费 -->
+        <hr>
+        <div style="display: flex; gap: 12px; flex-wrap: wrap; align-items: center; justify-content: space-between;">
+            <div style="display: flex; gap: 16px; flex-wrap: wrap;">
+                <div><span style="background: #1e1e2f; color: white; padding:6px 14px; border-radius: 60px; font-size:0.9rem;">没苦硬吃？</span></div>
+                <div style="color: #4f4f62;">越没钱→节俭是生存；经济好了→几块钱无脑花，因为你的时间+资产收益远超它。</div>
+            </div>
+            <div style="margin-top: 20px; background: #eae1d7; padding: 14px; border-radius: 18px;">
+                📅 <strong>为什么叫“初四法则”？</strong> 因为我的生日，以及我悟出这个道理的那天，正好是正月初四。在这一天迎灶神的日子，我决定送给自己一份礼物：<strong>不再为小钱纠结，也不沉迷物欲疯狂消费——那只是饮鸩止渴</strong>，而是让时间更值钱，让消费更理性。所以取名“初四法则”，希望能帮你摆脱消费纠结，找到平衡。
+            </div>
+        </div>
+
+        <!-- ========== 可折叠背景故事 ========== -->
+        <div class="story-container">
+            <details>
+                <summary>初四法则的背景</summary>
+                <div class="story-content">
+                    <h3>一、引言</h3>
+                    <p>我们从小被教育“节俭是美德”，但很少有人告诉我们，过度节俭其实是对自己时间的贱卖。同时，消费主义又在不停地说“对自己好一点”，却从不提醒我们，无节制的消费终将透支未来。</p>
+                    <p>这个法则不是真理，它只是一个思考工具。它不会替你决定该不该买那杯咖啡，但它会告诉你：那杯咖啡在你今天的生活里占据什么位置；你那半小时的时间，到底值多少钱。</p>
+                    <p>如果你愿意试试，可以先算算自己的两个数字：<strong>你半小时的时间值多少钱？你每天可以无脑花多少钱？</strong></p>
+                    <p>然后把这两个数字记在心里，下次遇到消费纠结时，拿出来量一量。你会发现，很多以前纠结的事，突然就有了答案。</p>
+                    <p style="font-style:italic;">（注：“无脑花”是指日常开销之外，允许自己奢侈一把的额度，花完不影响生活，也不影响资产增长。）</p>
+
+                    <h3>二、为什么我想研究这个？</h3>
+                    <p>这次回老家，我观察到一个很常见的现象：</p>
+                    <p>家里长辈为了省一两块钱，愿意花半小时比价、走很远的路，或者自己动手折腾。</p>
+                    <p>更典型的是“没苦硬吃”：过期东西舍不得扔，明明没必要做的事非要亲力亲为，结果省下的钱抵不上耗费的时间和精力。</p>
+                    <p>我自己也有类似问题：为了凑单省两块钱，我能花半小时比价，最后省下的钱还不够买瓶水。那种“刻在骨子里的节俭”，让我把时间浪费在了最不值钱的地方。</p>
+                    <p>但另一边，我也看到另一种人：明明收入不高，却纵情消费。买个几千块的相机用两次就吃灰，办张健身卡去两次再也没去过——用消费获得短暂快感，剩下的只有账单和后悔。</p>
+                    <p>这两种极端，是一枚硬币的两面：一种是“时间的廉价化”（为了省小钱浪费最宝贵的时间）；一种是“消费的无意识化”（为了买快感花掉不该花的钱）。</p>
+                    <p>我想要的是一个工具，能帮人理性消费——既不要为了省钱而贱卖时间，也不要为了爽而透支未来。</p>
+                    <p>后来我思考了一个问题：“没苦硬吃”到底对不对？</p>
+                    <p>结论是：越没钱的时候，这种节俭是无奈的生存策略，是对的；但当经济状况好转后，再这么做就完全没有必要了。因为你省下的几块钱，可能远低于你理财的利息或资产增值率。当你已经成为一个小资家庭，每天差几块钱的东西，完全可以无脑买，不用纠结。</p>
+                    <p>这个观察，最终催生了我的“初四法则”——一个用来验证这个想法的公式。</p>
+                </div>
+            </details>
+        </div>
+
+        <!-- footer 小提示 -->
+        <div class="footnote">
+            <span>✨ 初四消费法则</span>
+            <span style="margin-left: auto;">公式不是真理，但帮你理性决策</span>
+        </div>
+    </div>
+
+    <!-- 实时计算脚本 -->
+    <script>
+        (function() {
+            const incomeInput = document.getElementById('income');
+            const leisureInput = document.getElementById('leisureFactor');
+            const timeInput = document.getElementById('timeHours');
+            const timeValueSpan = document.getElementById('timeValue');
+
+            const assetsInput = document.getElementById('assets');
+            const rateReturnInput = document.getElementById('rateReturn');
+            const rateGrowthInput = document.getElementById('rateGrowth');
+            const dailyValueSpan = document.getElementById('dailyValue');
+
+            function parseFloatSafe(val, defaultValue = 0) {
+                let parsed = parseFloat(val);
+                return isNaN(parsed) ? defaultValue : parsed;
+            }
+
+            function updateTimeValue() {
+                const income = parseFloatSafe(incomeInput.value, 200000);
+                const leisure = parseFloatSafe(leisureInput.value, 2.5);
+                const hours = parseFloatSafe(timeInput.value, 0.5);
+                const valuePerHour = income / 8760;
+                const result = valuePerHour * leisure * hours;
+                timeValueSpan.innerText = result.toFixed(2);
+            }
+
+            function updateDailyValue() {
+                const assets = parseFloatSafe(assetsInput.value, 500000);
+                const r = parseFloatSafe(rateReturnInput.value, 1.8) / 100;
+                const g = parseFloatSafe(rateGrowthInput.value, 0.0) / 100;
+
+                if (assets <= 0) {
+                    dailyValueSpan.innerText = '0.00';
+                    return;
+                }
+                const daily = assets * (r - g) / 365;
+                const displayValue = daily > 0 ? daily : 0;
+                dailyValueSpan.innerText = displayValue.toFixed(2);
+            }
+
+            [incomeInput, leisureInput, timeInput].forEach(el => {
+                el.addEventListener('input', updateTimeValue);
+            });
+            [assetsInput, rateReturnInput, rateGrowthInput].forEach(el => {
+                el.addEventListener('input', updateDailyValue);
+            });
+
+            updateTimeValue();
+            updateDailyValue();
+        })();
+    </script>
+</body>
+</html>
